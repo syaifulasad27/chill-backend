@@ -106,6 +106,7 @@ Backend API for Chill App built with NestJS and MongoDB
 
 - RESTful API
 - MongoDB integration with Mongoose
+- Authentication (JWT)
 - Movie CRUD operations
 - Logging system
 - Validation
@@ -138,7 +139,7 @@ JWT_SECRET=your_jwt_secret
 
 ## API Documentation
 
-[View API Docs](https://documenter.getpostman.com/view/your-link)
+[View API Docs](https://.postman.co/workspace/My-Workspace~21307284-c14a-4fbf-8e04-6fa417d16768/collection/14810687-bf10a795-b4b1-4f29-815a-94e7e0124bd5?action=share&creator=14810687)
 
 ## License
 

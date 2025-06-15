@@ -9,7 +9,16 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    // Map CreateUserDto to User, adding required default properties
+    const user: any = {
+      ...createUserDto,
+      role: 'user', // or appropriate default
+      subscriptionPlan: null, // or appropriate default
+      watchlist: [],
+      orders: [],
+      isVerified: false,
+    };
+    return this.usersService.create(user);
   }
 
   @Get()
