@@ -17,6 +17,9 @@ export enum SubscriptionPlan {
 
 @Schema({ timestamps: true })
 export class User {
+  @Prop()
+  fullname?: string;
+
   @Prop({ required: true })
   username: string;
 

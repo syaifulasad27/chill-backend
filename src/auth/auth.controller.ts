@@ -1,4 +1,14 @@
-import { Body, Controller, Post, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  HttpCode,
+  HttpStatus,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
@@ -16,7 +26,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'User successfully registered' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 409, description: 'Email already exists' })
-  async signUp(@Body() signUpDto: SignUpDto): Promise<Tokens> {
+  async signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
   }
 
@@ -46,5 +56,15 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async refreshTokens(@Request() req): Promise<Tokens> {
     return this.authService.refreshTokens(req.user.sub, req.user.refreshToken);
+  }
+
+  @Get('verify-email')
+  @ApiOperation({ summary: 'Verify email address' })
+  @ApiResponse({ status: 200, description: 'Email successfully verified' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async verifyEmail(@Query('token') token: string): Promise<{ message: string }> {
+    await this.authService.verifyEmail(token);
+    return { message: 'Email verification successful' };
   }
 }

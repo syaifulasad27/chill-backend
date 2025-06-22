@@ -23,4 +23,8 @@ export class UsersService {
   async updateRefreshToken(email: string, refreshToken: string): Promise<User> {
     return this.userModel.findOneAndUpdate({ email }, { refreshToken }, { new: true });
   }
+
+  async updateProfileImage(userId: string, imageUrl: string): Promise<User> {
+    return this.userModel.findByIdAndUpdate(userId, { profileImage: imageUrl }, { new: true });
+  }
 }

@@ -9,36 +9,46 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 export class MoviesService {
   constructor(@InjectModel(Movie.name) private movieModel: Model<MovieDocument>) {}
 
-  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
-    const createdMovie = new this.movieModel(createMovieDto);
-    return createdMovie.save();
+  async create(dto: CreateMovieDto, createdBy: string) {
+    const created = new this.movieModel({
+      ...dto,
+      created_by: createdBy,
+    });
+    return created.save();
   }
 
-  async findAll(): Promise<Movie[]> {
-    return this.movieModel.find().exec();
+  async findAll() {
+    return this.movieModel.find().sort({ released: -1 }).limit(100);
   }
 
-  async findOne(id: string): Promise<Movie> {
-    return this.movieModel.findById(id).exec();
+  async findById(id: string) {
+    return this.movieModel.findById(id);
   }
 
-  async update(id: string, updateMovieDto: UpdateMovieDto): Promise<Movie> {
-    return this.movieModel.findByIdAndUpdate(id, updateMovieDto, { new: true }).exec();
+  async searchByTitle(keyword: string) {
+    return this.movieModel
+      .find({
+        $text: { $search: keyword },
+      })
+      .limit(100);
   }
 
-  async delete(id: string): Promise<Movie> {
-    return this.movieModel.findByIdAndDelete(id).exec();
+  async filterByTypeAndGenre(type: string, genre?: string) {
+    const filter: any = { type };
+
+    if (genre) {
+      filter.genres = { $in: [new RegExp(genre, 'i')] }; // insensitive match
+    }
+    console.log(filter);
+
+    return this.movieModel.find(filter).sort({ released: -1 }).limit(100);
   }
 
-  async incrementViewCount(id: string): Promise<Movie> {
-    return this.movieModel.findByIdAndUpdate(id, { $inc: { view_count: 1 } }, { new: true }).exec();
+  async update(id: string, dto: UpdateMovieDto) {
+    return this.movieModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
-  async findFeatured(): Promise<Movie[]> {
-    return this.movieModel.find({ is_featured: true }).exec();
-  }
-
-  async findByType(type: string): Promise<Movie[]> {
-    return this.movieModel.find({ type }).exec();
+  async remove(id: string) {
+    return this.movieModel.findByIdAndDelete(id);
   }
 }
